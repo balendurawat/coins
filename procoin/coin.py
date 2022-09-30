@@ -19,21 +19,23 @@ class Blockchain:
 
     def __init__(self):
         
-        self.chain =[] #it is the chain contained in the blockchain or list containing the blocks
+        self.chain =[] 
 
-        self.create_block(proof = 1, previous_hash = '0' ) # this is for genesis block so no previous hash
-        #create block will help to create block
+        self.transactions = []
 
+        self.create_block(proof = 1, previous_hash = '0' ) 
 
-        #we will use create_block function as soon as the mining is done by mine function
-
+        
     def create_block(self, proof, previous_hash):
         #we will get proof from mine function
         block = {'index': len(self.chain) + 1,
                  'timestamp' : str(datetime.datetime.now()),
                  'proof' : proof,
-                 'previous_hash' : previous_hash
+                 'previous_hash' : previous_hash,
+                 'transactions': self.transactions
                 }
+        
+        self.transactions = []
 
         self.chain.append(block)
 
@@ -91,7 +93,16 @@ class Blockchain:
         return True
 
 
+    
+    def add_transaction(self, sender, reciever, amount):
+        self.transactions.appned({
+            'sender' : sender,
+            'reciever' : reciever,
+            'amount': amount
+        })
 
+        previous_block = self.get_previous_block()
+        return previous_block['index']+1
 
 # now getting started with web app
 
