@@ -1,19 +1,24 @@
-# important imports
-import datetime
-# each block will have its own timestamp when it is mined
-import hashlib
-# used to hash block
-import json
-# function to encode the block before hash them
-from flask import Flask, jsonify
+# cypto
 
-# we will first make a class
+# blockchain code
+
+import datetime
+import hashlib
+import json
+
+from flask import Flask, jsonify, request
+
+import requests
+from uuid import uuid4 
+from urllib.parse import urlparse
+
+
+
 
 class Blockchain:
 
     def __init__(self):
-        # self refers to the object we create once the instance is made
-
+        
         self.chain =[] #it is the chain contained in the blockchain or list containing the blocks
 
         self.create_block(proof = 1, previous_hash = '0' ) # this is for genesis block so no previous hash
@@ -128,5 +133,11 @@ def get_chain() :
 
 
 app.run(host = '0.0.0.0', port= 5000)
+
+
+
+
+
+
 
 
