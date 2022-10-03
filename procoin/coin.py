@@ -137,6 +137,13 @@ class Blockchain:
         
 
 
+# first node address
+node_address = str(uuid4()).replace('-','')
+
+
+
+
+
 # now getting started with web app
 
 app = Flask(__name__)
@@ -152,13 +159,15 @@ def mine_block():
 
     previous_hash = blockchain.hash(previous_block)
 
+    blockchain.add_transaction(sender = node_address, reciever = "xyz", amount = 1)
     block = blockchain.create_block(proof, previous_hash)
 
     response = {'message' : 'Congratulations, you just mined a block',
                 'index' : block['index'],
                 'timestamp' : block['timestamp'],
                 'proof' : block['proof'],
-                'previous_hash' : block['previous_hash']
+                'previous_hash' : block['previous_hash'],
+                'transactions': block['transactions']
                 }
 
     return jsonify(response), 200
@@ -173,6 +182,55 @@ def get_chain() :
 
     return jsonify(response), 200
 
+@app.route('/is_valid', methods = ['GET'])
+def is_valid():
+    is_valid = blockchain.is_chain_valid(blockchain.chain)
+    if is_valid:
+        resoponse = {'message': 'The Blockchain is valid'}
+    else:
+        response = {'message': 'Invalid chain'}
+    return jsonify(response), 200
+
+
+@app.route('/add_transaction', methods = ['POST'])
+def add_transaction():
+    json = request.get_json()
+    transaction_keys = ['sender', 'reciever', 'amount']
+    if not all (key in json for key in transaction_keys):
+        return 'Some elements of the transaction are missing', 400
+    index = blockchain.add_transaction(json['sender'], json['reciever'], json['amount'])
+    response = {'message' : f'This transaction will be added to Block {index}'}
+    return jsonify(response), 201
+
+
+# decentralization
+@app.route('/connect_node', methods = ['POST'])
+def connect_node():
+    json = request.get_json()
+    nodes = json.get('node')
+    if nodes is None:
+        return "No node", 400
+    for node in nodes:
+        blockchain.add_node(node)
+    response = {'message': 'All nodes are connected. OurCoin blockchain contains new nodes',
+                'total_nodes': list(blockchain.nodes)        
+            }
+    return jsonify(response), 201
+
+
+
+@app.route('/replace_chain', methods = ['GET'])
+def replace_chain():
+    is_chain_replaced = blockchain.replace_chain()
+    if is_chain_replaced:
+        resoponse = {'message': 'The chain is replaced with the longest chain',
+            'new_chain': blockchain.chain
+        }
+    else:
+        response = {'message': 'The chain is the largest one',
+            'actual_chain': blockchain.chain
+        }
+    return jsonify(response), 200
 
 
 
