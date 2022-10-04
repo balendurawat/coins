@@ -159,7 +159,7 @@ def mine_block():
 
     previous_hash = blockchain.hash(previous_block)
 
-    blockchain.add_transaction(sender = node_address, reciever = "procoin", amount = 1)
+    blockchain.add_transaction(sender = node_address, reciever = "siddarth", amount = 1)
     block = blockchain.create_block(proof, previous_hash)
 
     response = {'message' : 'Congratulations, you just mined a block',
@@ -234,7 +234,7 @@ def replace_chain():
 
 
 
-app.run(host = '0.0.0.0', port= 5000)
+app.run(host = '0.0.0.0', port= 5003)
 
 
 
